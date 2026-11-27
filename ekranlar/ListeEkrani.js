@@ -4,6 +4,7 @@ import {
   FlatList,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from 'react-native';
 
@@ -13,6 +14,7 @@ const API_URL =
 export default function ListeEkrani() {
   const [kitaplar, setKitaplar] = useState([]);
   const [yukleniyor, setYukleniyor] = useState(true);
+  const [arama, setArama] = useState('');
 
   const kitaplariYukle = async () => {
     setYukleniyor(true);
@@ -39,25 +41,44 @@ export default function ListeEkrani() {
     );
   }
 
+  const filtrelenmisKitaplar = kitaplar.filter((kitap) =>
+    kitap.title.toLowerCase().includes(arama.toLowerCase()),
+  );
+
   return (
-    <FlatList
-      data={kitaplar}
-      keyExtractor={(item) => item.key}
-      renderItem={({ item }) => (
-        <View style={styles.satir}>
-          <Text style={styles.baslik}>{item.title}</Text>
-          <Text style={styles.yazar}>
-            {item.authors.length > 0
-              ? item.authors[0].name
-              : 'Bilinmeyen yazar'}
-          </Text>
-        </View>
-      )}
-    />
+    <View style={{ flex: 1 }}>
+      <TextInput
+        style={styles.aramaKutusu}
+        placeholder="Kitap ara..."
+        value={arama}
+        onChangeText={setArama}
+      />
+      <FlatList
+        data={filtrelenmisKitaplar}
+        keyExtractor={(item) => item.key}
+        renderItem={({ item }) => (
+          <View style={styles.satir}>
+            <Text style={styles.baslik}>{item.title}</Text>
+            <Text style={styles.yazar}>
+              {item.authors.length > 0
+                ? item.authors[0].name
+                : 'Bilinmeyen yazar'}
+            </Text>
+          </View>
+        )}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  aramaKutusu: {
+    margin: 12,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+  },
   ortala: {
     flex: 1,
     alignItems: 'center',
